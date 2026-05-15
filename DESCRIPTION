@@ -3,7 +3,8 @@ Type: Package
 Title: Cell Type Enrichment Scoring and Visualization for Bulk RNA-seq
 Version: 0.1.0
 Authors@R: person("Masaya", "Takasaki", role = c("aut", "cre"),
-    email = "masaki03@uw.edu")
+    email = "masaki03@uw.edu",
+    comment = c(affiliation = "Department of Obstetrics and Gynecology, University of Washington; Hamazaki Lab"))
 Description: Computes and visualizes cell type enrichment scores from bulk
     RNA-seq log2 fold-change results using cell-type marker gene sets.
     Supports per-condition dot plots, cross-condition comparisons, and

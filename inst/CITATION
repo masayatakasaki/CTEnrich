@@ -1,7 +1,8 @@
 bibentry(
   bibtype  = "Manual",
   title    = "CTEnrich: Cell Type Enrichment Scoring and Visualization for Bulk RNA-seq",
-  author   = person("Masaya", "Takasaki"),
+  author   = person("Masaya", "Takasaki",
+    comment = c(affiliation = "Department of Obstetrics and Gynecology, University of Washington; Hamazaki Lab")),
   year     = format(Sys.Date(), "%Y"),
   note     = "R package version 0.1.0",
   url      = "https://github.com/masayatakasaki/CTEnrich"
