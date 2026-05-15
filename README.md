@@ -9,11 +9,7 @@ Given a set of DESeq2 results (one per condition vs. a baseline) and a table of 
 ## Installation
 
 ```r
-# Development version
 devtools::install_github("masayatakasaki/CTEnrich")
-
-# Or load without installing (e.g. on HPC)
-devtools::load_all("~/R/CTEnrich")
 ```
 
 ## Input format
