@@ -4,6 +4,8 @@ Cell type enrichment scoring and visualization for bulk RNA-seq.
 
 Given a set of DESeq2 results (one per condition vs. a baseline) and a table of cell-type marker gene sets, CTEnrich scores each condition by averaging the log2 fold-change values of each cell type's markers. High mean LFC indicates the condition has upregulated that cell type's signature relative to the baseline.
 
+> **Recommended baseline:** pluripotent cells (e.g. iPSCs or ESCs). Because pluripotent cells express few lineage-specific markers, virtually any differentiated signature will appear as a positive LFC, maximising the diversity of detectable enriched cell types.
+
 ## Installation
 
 ```r
