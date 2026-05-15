@@ -295,7 +295,7 @@ plot_mean_time <- function(res_list, thresh = 2, label, figs_dir = ".") {
     ggplot2::theme(axis.text.x  = ggplot2::element_text(angle = 45, hjust = 1),
                    axis.title.x = ggplot2::element_blank(),
                    legend.position = "none") +
-    ggplot2::labs(y       = "mean developmental time of enriched cell types",
+    ggplot2::labs(y       = "mean embryonic day of enriched cell types",
                   caption = paste0("threshold: ", thresh))
 
   if (!is.null(figs_dir))
@@ -354,7 +354,7 @@ plot_order_comp <- function(res_list, thresh = 2, figs_dir = ".") {
     ggrepel::geom_text_repel(ggplot2::aes(label = cell_type),
                               max.overlaps = Inf, size = 2) +
     ggplot2::theme_bw() +
-    ggplot2::labs(x = "developmental time", y = "log2 mean LFC",
+    ggplot2::labs(x = "mouse embryonic day", y = "log2 mean LFC",
                   shape = NULL, color = NULL)
 
   if (!is.null(figs_dir))

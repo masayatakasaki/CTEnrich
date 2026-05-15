@@ -3,5 +3,6 @@
 .RData
 .Ruserdata
 *.Rproj
-marker-generation/
+data-raw/*.log
+data-raw/*.err
 TODO.md
