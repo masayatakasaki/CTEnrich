@@ -17,6 +17,7 @@ BugReports: https://github.com/masayatakasaki/CTEnrich/issues
 Imports:
     dplyr,
     tidyr,
-    ggplot2
+    ggplot2,
+    ggrepel
 License: MIT + file LICENSE
 Encoding: UTF-8
