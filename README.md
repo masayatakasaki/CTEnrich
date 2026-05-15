@@ -4,8 +4,6 @@ Cell type enrichment scoring and visualization for bulk RNA-seq.
 
 Given a set of DESeq2 results (one per condition vs. a baseline) and a table of cell-type marker gene sets, CTEnrich scores each condition by averaging the log2 fold-change values of each cell type's markers. High mean LFC indicates the condition has upregulated that cell type's signature relative to the baseline.
 
-Marker gene sets should ideally come from single-cell RNA-seq data relevant to your biological context — for example, top differentially expressed genes per cluster from a scRNA-seq atlas. CTEnrich ships with a ready-to-use set derived from the Qiu et al. (2024) mouse developmental atlas (see [Built-in marker set](#built-in-marker-set)), but supplying markers from a context-matched dataset will improve sensitivity.
-
 > **Recommended baseline:** pluripotent cells (iPSCs or ESCs), which maximise detectable cell type diversity. Same-experiment, same-library-prep samples are ideal; public transcriptomes can be used in a pinch but may introduce batch effects.
 
 ## Installation
@@ -31,21 +29,24 @@ A data frame with:
 | `germ_layer` | no | Used for colouring in plots |
 | `time` | no | Developmental time; required for `plot_mean_time` and `plot_order_comp` |
 
+Marker sets should ideally come from scRNA-seq data relevant to your biological context (e.g. top DE genes per cluster from an atlas). Context-matched markers will improve sensitivity. A built-in set derived from a mouse developmental atlas (converted to human orthologs) is included; see [Built-in marker set](#built-in-marker-set).
+
 Use `split_markers()` to convert a comma-separated string column to the required list-column format, and `validate_markers()` to check the input before scoring. Any extra columns pass through `marker_enrich_table()` unchanged.
 
 Gene symbols must be in the same namespace as `rownames(res)` — e.g. both HGNC human symbols, or both MGI mouse symbols.
 
-## Built-in marker set
+## Built-in marker sets
 
-CTEnrich ships with `markers_human`, a set of 252 cell type marker gene lists
-derived from the mouse developmental atlas of Qiu et al. (2024), converted to
-human orthologs via Ensembl BioMart. It covers six germ layers (Ectoderm,
-Endoderm, Extraembryonic, Mesoderm, Other, PGC) and is suitable for scoring
-human bulk RNA-seq data against developmental cell type signatures.
+CTEnrich ships with two marker sets derived from the mouse developmental atlas of Qiu et al. (2024), covering 252 cell types across six germ layers (Ectoderm, Endoderm, Extraembryonic, Mesoderm, Other, PGC) with ~19 markers each.
+
+| Dataset | Symbols | Use with |
+|---|---|---|
+| `markers_human` | HGNC (human orthologs via Ensembl BioMart) | Human bulk RNA-seq |
+| `markers_mouse` | MGI (original mouse symbols) | Mouse bulk RNA-seq |
 
 ```r
-data(markers_human)
-# 252 cell types, ~19 markers each
+data(markers_human)  # for human data
+data(markers_mouse)  # for mouse data
 ```
 
 ## Quick start

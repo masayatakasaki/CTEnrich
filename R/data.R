@@ -15,3 +15,20 @@
 #   data(markers_human)
 #   tbl <- marker_enrich_table(res, markers_human)
 "markers_human"
+
+# markers_mouse: cell type marker gene sets from Qiu et al. 2024,
+# using original MGI mouse gene symbols.
+#
+# A data frame with 252 rows and 3 columns:
+#   cell_type    - character; unique cell type name
+#   marker_genes - list-column of character vectors; MGI mouse gene symbols
+#   germ_layer   - character; one of Ectoderm, Endoderm, Extraembryonic,
+#                  Mesoderm, Other, PGC
+#
+# Source: Qiu C et al. (2024) A single-cell time-lapse of mouse development
+#   from gastrulation to birth. Nature.
+#
+# Usage:
+#   data(markers_mouse)
+#   tbl <- marker_enrich_table(res, markers_mouse)
+"markers_mouse"
