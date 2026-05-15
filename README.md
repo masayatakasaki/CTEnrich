@@ -32,18 +32,20 @@ A data frame with:
 
 Use `split_markers()` to convert a comma-separated string column to the required list-column format, and `validate_markers()` to check the input before scoring.
 
-Gene symbols must be in the same namespace as `rownames(res)`. If your marker database uses mouse symbols, convert to human orthologs before passing to CTEnrich.
+Gene symbols must be in the same namespace as `rownames(res)` — e.g. both HGNC human symbols, or both MGI mouse symbols.
 
 ## Quick start
 
 ```r
 library(CTEnrich)
 
-# Prepare markers from Excel (mouse atlas → human orthologs)
-markers <- as.data.frame(readxl::read_excel("markers.xlsx"))[, c("cell_type", "marker_genes", "germ_layer")]
+# Build a markers table from a data frame with comma-separated gene strings
+markers <- data.frame(
+  cell_type    = c("Cardiomyocyte", "Hepatocyte", "Neuron"),
+  marker_genes = c("TNNT2, MYH7, ACTC1", "ALB, AFP, HNF4A", "MAP2, SYP, NCAM1"),
+  germ_layer   = c("Mesoderm", "Endoderm", "Ectoderm")
+)
 markers <- split_markers(markers, "marker_genes", sep = ", ")
-markers$marker_genes <- lapply(markers$marker_genes,
-                               function(gs) orthologs$human[orthologs$mouse %in% gs])
 validate_markers(markers)
 
 # Score all conditions
