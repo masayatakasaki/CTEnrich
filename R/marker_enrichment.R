@@ -49,7 +49,7 @@ marker_enrich_table <- function(res, markers) {
 }
 
 # Reorder rows of df to match ref_levels order.
-# Unmatched ref_levels produce NA rows — intentional so gen_comp_thresh can
+# Unmatched ref_levels produce NA rows — intentional so plot_comp_thresh can
 # plot all base cell types even when a comparison condition is missing some.
 reorder_like <- function(df, ref_levels) {
   idx     <- match(ref_levels, as.character(df$cell_type))
@@ -61,7 +61,7 @@ reorder_like <- function(df, ref_levels) {
 }
 
 # Produce all cyclic rotations of a named list so that each element appears
-# first exactly once — used by gen_comp_multi to cycle every condition as base.
+# first exactly once — used by plot_comp_multi to cycle every condition as base.
 rotate_list <- function(x) {
   n <- length(x)
   lapply(seq_len(n), function(i) x[c(seq(i, n), if (i > 1) seq_len(i - 1))])
@@ -73,7 +73,7 @@ rotate_list <- function(x) {
 # germ_layer column is optional; if absent all points use the default colour.
 # coord_flip(ylim=...) is used instead of ylim() to avoid dropping data before
 # geom_jitter runs (ylim() removes points, coord clipping does not).
-gen_layer <- function(res, name, thresh = 2, filter = TRUE, figs_dir = ".") {
+plot_layer <- function(res, name, thresh = 2, filter = TRUE, figs_dir = ".") {
   res_f <- if (!filter) {
     res
   } else if (is.na(thresh)) {
@@ -146,7 +146,7 @@ gen_layer <- function(res, name, thresh = 2, filter = TRUE, figs_dir = ".") {
 #   with a binary colour; height = 6; saves as {name}CompThresh.tiff.
 # filter = FALSE: all anchor cell types shown; each condition a distinct colour;
 #   height = 25; saves as {name}CompFull.tiff.
-gen_comp <- function(ordered_res_list, thresh = 2, filter = TRUE, figs_dir = ".") {
+plot_comp <- function(ordered_res_list, thresh = 2, filter = TRUE, figs_dir = ".") {
   base_name <- names(ordered_res_list)[1]
   base_df   <- ordered_res_list[[1]]
 
@@ -196,9 +196,9 @@ gen_comp <- function(ordered_res_list, thresh = 2, filter = TRUE, figs_dir = "."
   invisible(p)
 }
 
-# Run gen_comp with each condition as the anchor in turn.
-gen_comp_multi <- function(res_list, thresh = 2, filter = TRUE, figs_dir = ".") {
-  invisible(lapply(rotate_list(res_list), gen_comp,
+# Run plot_comp with each condition as the anchor in turn.
+plot_comp_multi <- function(res_list, thresh = 2, filter = TRUE, figs_dir = ".") {
+  invisible(lapply(rotate_list(res_list), plot_comp,
                    thresh = thresh, filter = filter, figs_dir = figs_dir))
 }
 
@@ -207,7 +207,7 @@ gen_comp_multi <- function(res_list, thresh = 2, filter = TRUE, figs_dir = ".") 
 # than in any comparison condition. Top `top` cell types shown.
 # Requires at least 2 conditions; cell types with no data in any other condition
 # are excluded (NA uniqueness).
-gen_uniqueness <- function(ordered_res_list, top = 30, figs_dir = ".") {
+plot_uniqueness <- function(ordered_res_list, top = 30, figs_dir = ".") {
   if (length(ordered_res_list) < 2)
     stop("`ordered_res_list` must have at least 2 conditions", call. = FALSE)
 
@@ -253,9 +253,9 @@ gen_uniqueness <- function(ordered_res_list, top = 30, figs_dir = ".") {
   invisible(p)
 }
 
-# Run gen_uniqueness with each condition as the anchor in turn.
-gen_uniqueness_multi <- function(res_list, top = 30, figs_dir = ".") {
-  invisible(lapply(rotate_list(res_list), gen_uniqueness,
+# Run plot_uniqueness with each condition as the anchor in turn.
+plot_uniqueness_multi <- function(res_list, top = 30, figs_dir = ".") {
+  invisible(lapply(rotate_list(res_list), plot_uniqueness,
                    top = top, figs_dir = figs_dir))
 }
 
@@ -263,7 +263,7 @@ gen_uniqueness_multi <- function(res_list, top = 30, figs_dir = ".") {
 # Requires a 'time' column in the markers data frame (passed through by
 # marker_enrich_table). Conditions with no enriched cell types that have time
 # annotations are silently dropped.
-gen_mean_time <- function(res_list, thresh = 2, label, figs_dir = ".") {
+plot_mean_time <- function(res_list, thresh = 2, label, figs_dir = ".") {
   has_time <- vapply(res_list, function(r) "time" %in% colnames(r), logical(1))
   if (!all(has_time))
     stop("All elements of `res_list` must have a 'time' column. ",
@@ -307,7 +307,7 @@ gen_mean_time <- function(res_list, thresh = 2, label, figs_dir = ".") {
 # step (above thresh in condition i but not i-1) by developmental time vs
 # log2(mean LFC). Requires a 'time' column in the markers data frame and the
 # ggrepel package for labels.
-gen_order_comp <- function(res_list, thresh = 2, figs_dir = ".") {
+plot_order_comp <- function(res_list, thresh = 2, figs_dir = ".") {
   has_time <- vapply(res_list, function(r) "time" %in% colnames(r), logical(1))
   if (!all(has_time))
     stop("All elements of `res_list` must have a 'time' column. ",
@@ -374,7 +374,7 @@ compute_auc <- function(res_list, thresh = 2) {
 # Smooth curves of mean LFC vs cell-type rank, one per condition.
 # The LOESS curve and the AUC number are intentionally separate: the curve
 # shows the trend shape; the AUC (raw sum, in caption) measures total area.
-gen_auc_curve <- function(res_list, thresh = 2, label, figs_dir = ".") {
+plot_auc_curve <- function(res_list, thresh = 2, label, figs_dir = ".") {
   auc_vals <- compute_auc(res_list, thresh)
 
   auc_data <- dplyr::bind_rows(lapply(names(res_list), function(nm) {
@@ -407,8 +407,8 @@ gen_auc_curve <- function(res_list, thresh = 2, label, figs_dir = ".") {
 }
 
 # Bar plot of number of cell types with mean >= thresh per condition.
-# Complements gen_auc_bar: breadth (how many) vs. magnitude (how strongly).
-gen_n_enriched <- function(res_list, thresh = 2, label, figs_dir = ".") {
+# Complements plot_auc_bar: breadth (how many) vs. magnitude (how strongly).
+plot_n_enriched <- function(res_list, thresh = 2, label, figs_dir = ".") {
   counts <- vapply(names(res_list), function(nm) {
     m <- res_list[[nm]]$mean
     sum(!is.na(m) & m >= thresh)
@@ -435,8 +435,8 @@ gen_n_enriched <- function(res_list, thresh = 2, label, figs_dir = ".") {
 }
 
 # Bar plot of AUC score per condition (total enrichment magnitude).
-# Complements gen_n_enriched: magnitude (how strongly) vs. breadth (how many).
-gen_auc_bar <- function(res_list, thresh = 2, label, figs_dir = ".") {
+# Complements plot_n_enriched: magnitude (how strongly) vs. breadth (how many).
+plot_auc_bar <- function(res_list, thresh = 2, label, figs_dir = ".") {
   auc_vals <- compute_auc(res_list, thresh)
   plot_data <- data.frame(
     condition = factor(names(auc_vals), levels = names(auc_vals)),
