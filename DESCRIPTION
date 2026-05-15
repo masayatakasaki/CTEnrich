@@ -12,7 +12,7 @@ Description: Computes and visualizes cell type enrichment scores from bulk
     RNA-seq log2 fold-change results using cell-type marker gene sets.
     Supports per-condition dot plots, cross-condition comparisons, and
     AUC-based diversity curves.
-URL: https://github.com/masayatakasaki/CTEnrich
+URL: https://github.com/masayatakasaki/CTEnrich, https://www.hamazaki-lab.com/
 BugReports: https://github.com/masayatakasaki/CTEnrich/issues
 Imports:
     dplyr,

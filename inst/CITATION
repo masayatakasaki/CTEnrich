@@ -6,5 +6,6 @@ bibentry(
     person("Nobuhiko", "Hamazaki")),
   year     = format(Sys.Date(), "%Y"),
   note     = "R package version 0.1.0",
-  url      = "https://github.com/masayatakasaki/CTEnrich"
+  url      = "https://github.com/masayatakasaki/CTEnrich",
+  note     = "Hamazaki Lab, Department of Obstetrics and Gynecology, University of Washington. https://www.hamazaki-lab.com/"
 )
