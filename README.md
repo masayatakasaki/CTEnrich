@@ -34,12 +34,28 @@ Use `split_markers()` to convert a comma-separated string column to the required
 
 Gene symbols must be in the same namespace as `rownames(res)` — e.g. both HGNC human symbols, or both MGI mouse symbols.
 
+## Built-in marker set
+
+CTEnrich ships with `markers_human`, a set of 252 cell type marker gene lists
+derived from the mouse developmental atlas of Qiu et al. (2024), converted to
+human orthologs via Ensembl BioMart. It covers six germ layers (Ectoderm,
+Endoderm, Extraembryonic, Mesoderm, Other, PGC) and is suitable for scoring
+human bulk RNA-seq data against developmental cell type signatures.
+
+```r
+data(markers_human)
+# 252 cell types, ~19 markers each
+```
+
 ## Quick start
 
 ```r
 library(CTEnrich)
 
-# Build a markers table from a data frame with comma-separated gene strings
+# Use the built-in marker set (Qiu et al. 2024, human orthologs)
+data(markers_human)
+
+# Or supply your own — split_markers() converts comma-separated strings
 markers <- data.frame(
   cell_type    = c("Cardiomyocyte", "Hepatocyte", "Neuron"),
   marker_genes = c("TNNT2, MYH7, ACTC1", "ALB, AFP, HNF4A", "MAP2, SYP, NCAM1"),
@@ -48,8 +64,8 @@ markers <- data.frame(
 markers <- split_markers(markers, "marker_genes", sep = ", ")
 validate_markers(markers)
 
-# Score all conditions
-markerResList <- lapply(resList, marker_enrich_table, markers = markers)
+# Score all conditions (resList = named list of DESeq2 results)
+markerResList <- lapply(resList, marker_enrich_table, markers = markers_human)
 
 # Per-condition plots
 gen_layer(markerResList[["condition_a"]], name = "condition_a", filter = TRUE)
@@ -79,3 +95,7 @@ gen_n_enriched(markerResList, thresh = 2, label = "N_enriched",     figs_dir = "
 | `gen_n_enriched(res_list, thresh, label)` | Bar plot of enriched cell type count per condition |
 
 All plot functions accept `figs_dir = NULL` to return the plot object without saving.
+
+## References
+
+Qiu C, et al. (2024) A single-cell time-lapse of mouse development from gastrulation to birth. *Nature*.
