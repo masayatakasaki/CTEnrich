@@ -1,0 +1,15 @@
+Package: CTEnrich
+Type: Package
+Title: Cell Type Enrichment Scoring and Visualization for Bulk RNA-seq
+Version: 0.1.0
+Description: Computes and visualizes cell type enrichment scores from bulk
+    RNA-seq log2 fold-change results using cell-type marker gene sets.
+    Supports per-condition dot plots, cross-condition comparisons, and
+    AUC-based diversity curves.
+Imports:
+    dplyr,
+    tidyr,
+    ggplot2
+License: MIT + file LICENSE
+Encoding: UTF-8
+RoxygenNote: 7.0.0
