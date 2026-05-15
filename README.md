@@ -4,6 +4,8 @@ Cell type enrichment scoring and visualization for bulk RNA-seq.
 
 Given a set of DESeq2 results (one per condition vs. a baseline) and a table of cell-type marker gene sets, CTEnrich scores each condition by averaging the log2 fold-change values of each cell type's markers. High mean LFC indicates the condition has upregulated that cell type's signature relative to the baseline.
 
+Marker gene sets should ideally come from single-cell RNA-seq data relevant to your biological context — for example, top differentially expressed genes per cluster from a scRNA-seq atlas. CTEnrich ships with a ready-to-use set derived from the Qiu et al. (2024) mouse developmental atlas (see [Built-in marker set](#built-in-marker-set)), but supplying markers from a context-matched dataset will improve sensitivity.
+
 > **Recommended baseline:** pluripotent cells (iPSCs or ESCs), which maximise detectable cell type diversity. Same-experiment, same-library-prep samples are ideal; public transcriptomes can be used in a pinch but may introduce batch effects.
 
 ## Installation
