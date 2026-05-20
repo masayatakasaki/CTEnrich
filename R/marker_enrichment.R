@@ -57,7 +57,9 @@ reorder_like <- function(df, ref_levels) {
   if (length(missing) > 0)
     warning("cell types in ref_levels not found in df: ",
             paste(missing, collapse = ", "), call. = FALSE)
-  df[idx, , drop = FALSE]
+  result           <- df[idx, , drop = FALSE]
+  result$cell_type <- ref_levels
+  result
 }
 
 # Produce all cyclic rotations of a named list so that each element appears
@@ -160,7 +162,7 @@ plot_comp <- function(ordered_res_list, thresh = 2, filter = TRUE, figs_dir = ".
 
   clusters  <- as.character(base_df$cell_type)
   all_list  <- c(lapply(ordered_res_list[-1], reorder_like, clusters),
-                 ordered_res_list[1])
+                 setNames(list(base_df), base_name))
 
   plot_data <- dplyr::bind_rows(lapply(names(all_list), function(nm) {
     data.frame(cell_type = as.character(all_list[[nm]]$cell_type),
@@ -170,28 +172,29 @@ plot_comp <- function(ordered_res_list, thresh = 2, filter = TRUE, figs_dir = ".
 
   label_size <- max(4, min(8, 120 / length(clusters)))
 
-  p <- plot_data |>
-    dplyr::mutate(cell_type = factor(cell_type, levels = rev(clusters))) |>
-    ggplot2::ggplot(ggplot2::aes(
-      cell_type, mean,
-      color = if (filter) condition == base_name else condition
-    )) +
+  plot_data <- plot_data |>
+    dplyr::mutate(
+      cell_type = factor(cell_type, levels = rev(clusters)),
+      condition = factor(condition, levels = c(setdiff(names(all_list), base_name), base_name))
+    )
+
+  p <- ggplot2::ggplot(plot_data, ggplot2::aes(cell_type, mean, color = condition)) +
     ggplot2::geom_point(size = 3) +
     ggplot2::geom_hline(yintercept = thresh, linetype = "dashed") +
-    ggplot2::coord_flip(ylim = if (filter) c(-3, 10) else c(-10, 10)) +
+    ggplot2::coord_flip(ylim = c(-10, 10)) +
     ggplot2::theme_bw() +
     ggplot2::theme(axis.text.y = ggplot2::element_text(size = label_size)) +
     ggplot2::labs(
       title   = paste0(base_name, if (filter) " comparison" else " all cell types comparison"),
       caption = paste0("threshold: ", thresh),
-      y = "mean log2FC"
+      y = "mean log2FC", color = NULL
     )
 
   if (!is.null(figs_dir)) {
     suffix <- if (filter) "CompThresh" else "CompFull"
     h      <- if (filter) 6 else 25
     ggplot2::ggsave(file.path(figs_dir, paste0(base_name, suffix, ".tiff")),
-                    p, height = h, width = 12)
+                    p, height = h, width = 8)
   }
   invisible(p)
 }
@@ -389,8 +392,12 @@ plot_auc_curve <- function(res_list, thresh = 2, label, figs_dir = ".") {
   auc_caption <- paste(paste0(names(auc_vals), ": ", round(auc_vals, 1)),
                        collapse = "\n")
 
+  .ymax <- max(max(auc_data$mean) * 1.1, thresh + 1)
+
   p <- ggplot2::ggplot(auc_data, ggplot2::aes(rank, mean, color = condition)) +
     ggplot2::geom_smooth(se = FALSE, ggplot2::aes(linetype = condition)) +
+    ggplot2::stat_smooth(se = FALSE, geom = "area", alpha = 0.2,
+                         ggplot2::aes(fill = condition)) +
     ggplot2::geom_hline(yintercept = thresh, linetype = "dashed") +
     ggplot2::theme_bw() +
     ggplot2::theme(legend.position        = "inside",
@@ -399,7 +406,7 @@ plot_auc_curve <- function(res_list, thresh = 2, label, figs_dir = ".") {
                    legend.title           = ggplot2::element_blank()) +
     ggplot2::labs(x = "cell type rank", y = "mean log2FC",
                   caption = paste0("AUC (raw sum above thresh):\n", auc_caption)) +
-    ggplot2::coord_cartesian(ylim = c(thresh, 7))
+    ggplot2::coord_cartesian(ylim = c(thresh, .ymax))
 
   if (!is.null(figs_dir))
     ggplot2::ggsave(file.path(figs_dir, paste0(label, ".tiff")), p, width = 8)
